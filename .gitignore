@@ -1,3 +1,11 @@
+nofib-log-normal
+nofib-log-strict
+html-1.0.1.2/dist
+mtl/dist
+regex-posix-0.95.2/dist
+regex-base-0.93.2/dist
+regex-compat-0.95.1/dist
+
 # Generated file patterns
 *.o
 *.hi
