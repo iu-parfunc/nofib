@@ -1,0 +1,5 @@
+GHC info
+--------
+
+For testing, I'm using commit c78fedde7055490ca6f6210ada797190f3c35d87
+of https://github.com/iu-parfunc/ghc on branch nofib-testing
