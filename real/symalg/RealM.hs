@@ -1,8 +1,14 @@
-module RealM (RealT, evalReal, int2Real, addReal, subReal, mulReal, 
+{-# LANGUAGE CPP #-}
+module RealM (RealT, evalReal, int2Real, addReal, subReal, mulReal,
               divReal, sqrtReal) where
 
-data Tree a = TreeC a (Tree a) (Tree a)
- 
+data Tree a = TreeC a
+#ifdef STRICT_DATA
+                    ~(Tree a) ~(Tree a)
+#else
+                     (Tree a)  (Tree a)
+#endif
+
 data RealT = RealC (Tree Integer) deriving ()
 
 
@@ -71,9 +77,9 @@ int2Real x = RealC (mapTree (\n -> scale x n) numberTree)
 
 -- add two real numbers.
 addReal :: RealT -> RealT -> RealT
-addReal x y = 
-    RealC (mapTree (\n -> ((evalReal x (n-1)) + 
-                           (evalReal y (n-1)) + 5) `quot` 10) 
+addReal x y =
+    RealC (mapTree (\n -> ((evalReal x (n-1)) +
+                           (evalReal y (n-1)) + 5) `quot` 10)
                    numberTree)
 -------------------------------------------------------------------------------
 
@@ -81,7 +87,7 @@ addReal x y =
 -- subtract two real numbers.
 subReal :: RealT -> RealT -> RealT
 subReal x y =
-    RealC (mapTree (\n -> ((evalReal x (n-1)) - 
+    RealC (mapTree (\n -> ((evalReal x (n-1)) -
                            (evalReal y (n-1)) + 5) `quot` 10)
           numberTree)
 -------------------------------------------------------------------------------
@@ -107,10 +113,10 @@ mulReal (xr@(RealC x)) (yr@(RealC y)) =
                                                          (n - (msd x 0) - 2))
                                                x1 = (evalReal xr
                                                          (n - (msd y 0) - 2))
-                          in if (x0 == 0) && (y0 == 0) 
+                          in if (x0 == 0) && (y0 == 0)
                              then 0
                               else if x0 == 0
-                                   then mulAux y x 
+                                   then mulAux y x
                                    else mulAux x y)
           numberTree)
 -------------------------------------------------------------------------------
@@ -118,7 +124,7 @@ mulReal (xr@(RealC x)) (yr@(RealC y)) =
 
 -- divide two real numbers.
 divReal :: RealT -> RealT -> RealT
-divReal x y = 
+divReal x y =
     mulReal x (reciprocalReal y)
 -------------------------------------------------------------------------------
 
@@ -126,7 +132,7 @@ divReal x y =
 -- find the reciprocal of a real number.
 reciprocalReal :: RealT -> RealT
 reciprocalReal xr@(RealC x) =
-    RealC (mapTree 
+    RealC (mapTree
             (\n -> ((f (dx + n)) + 5) `quot` 10)
             numberTree)
     where
@@ -153,7 +159,7 @@ sqrReal (xr@(RealC x)) =
                                              else (n-1) `quot` 2
                               x0 = evalReal xr m
                               x1 = evalReal xr (n - (msd x 0) - 2)
-                          in if (x0 == 0) 
+                          in if (x0 == 0)
                              then 0
                              else scale (x1 * x1) (4 + 2*(msd x 0) - n))
            numberTree)
@@ -164,7 +170,7 @@ sqrReal (xr@(RealC x)) =
 sqrtReal :: RealT -> RealT
 sqrtReal xr@(RealC x) =
     RealC (mapTree
-            (\n -> if (evalReal xr (2*n)) == 0 
+            (\n -> if (evalReal xr (2*n)) == 0
                     then 0
                     else f n (2*hdx+2) xr (-2*hdx-2+n))
             numberTree)
@@ -176,7 +182,7 @@ sqrtReal xr@(RealC x) =
 	f n dx xr m = if m >= 0
               then 0
               else if m == -1
-                   then scale ((round . sqrt . fromInteger) 
+                   then scale ((round . sqrt . fromInteger)
 
 					(evalReal xr (dx - 10)))
 			      (5-hx+n)
@@ -185,7 +191,7 @@ sqrtReal xr@(RealC x) =
                     fm = (f n dx xr hm)
                     xv = evalReal xr (n+n)
 		    hx = dx `quot` 2
- 
+
 -------------------------------------------------------------------------------
 
 
@@ -193,14 +199,14 @@ sqrtReal xr@(RealC x) =
 -- representation for pi. This representation is grossly inefficient.
 pi :: RealT
 pi = RealC (mapTree
-            (\n -> if n > 0 then 0 else evalReal f n 
+            (\n -> if n > 0 then 0 else evalReal f n
             where
                 f = iter (int2Real 1)
                          (sqrtReal (RealC (mapTree (\n -> scale 5 (n+1))
                                                    numberTree)))
                          (RealC (mapTree (\n -> scale 25 (n+2)) numberTree))
                          (int2Real 1)
-                iter a b t x = if evalReal (subReal a b) (n-1) <= 1   
+                iter a b t x = if evalReal (subReal a b) (n-1) <= 1
                                then divReal (sqrReal a) t
                                else iter y
                                          (sqrtReal (mulReal a b))

@@ -1,10 +1,17 @@
+> {-# LANGUAGE CPP #-}
 > module Type_defs where
 
 > import Core_datatype
 
 > import Kernel
 
-> data MayBe a b = Ok a | Bad b deriving ( Eq )
+> data MayBe a b =
+#ifdef STRICT_DATA
+>                  Ok ~a
+#else
+>                  Ok  a
+#endif
+>                | Bad b deriving ( Eq )
 
 > data Token = Rvd String | Clr String | Bdr Binder_conn |
 >	       IfxBdr String | IfxOp String | Scan_Err String
@@ -21,18 +28,18 @@ following now defined in Core_datatype
 
 >{-
 > data Flagged_ITrm = Opr Operator Oprtype Int |
->		      Opnd Operand  	   | 
+>		      Opnd Operand  	   |
 >		      Prs_Err String
 >		      	deriving ( Eq )
 
 > data Operand = Itrm ITrm | Idec IDec | Isgn ISgn   -- normal operands
->		 | PApp Binder_conn IDec Bool        -- special partial apps, bool indicates anonymous declaration 
->		 | PairApp ITrm 
+>		 | PApp Binder_conn IDec Bool        -- special partial apps, bool indicates anonymous declaration
+>		 | PairApp ITrm
 >	 	 | ParIfx Binary_conn ITrm
 >		 | TypApp Flagged_ITrm
 >		   deriving ( Eq )
 
-> data Operator = OpItrm ITrm | OpBdr Binder_conn 
+> data Operator = OpItrm ITrm | OpBdr Binder_conn
 >		  | OpIfx Binary_conn | Spl String deriving ( Eq )
 
 

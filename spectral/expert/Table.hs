@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP #-}
+
 {------------------------------------------------------------------------------
 				    TABLES
 
@@ -38,7 +40,12 @@ import Result
 -- operations, provided that the tree remains well-balanced.  Eventually, there
 -- should be a constant-time version with the same semantics.
 
-data Table k v = Empty | Fork (Table k v) (k,v) (Table k v)
+data Table k v = Empty | Fork
+#ifdef STRICT_DATA
+                              ~(Table k v) (k,v) ~(Table k v)
+#else
+                               (Table k v) (k,v)  (Table k v)
+#endif
 
 newTable = Empty
 

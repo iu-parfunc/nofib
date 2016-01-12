@@ -9,6 +9,7 @@ data parallel search (for instance wedge first??). This module
 abstracts data type specific operations used in the Heuristic part of the tour.
 
 \begin{code}
+{-# LANGUAGE CPP #-}
 module ChessSetList(Tile,
 		    ChessSet,
 		    createBoard,
@@ -27,7 +28,7 @@ module ChessSetList(Tile,
 
 %%%%%%%%%%%%%%%%%% I M P O R T S  /  T Y P E   D E F S %%%%%%%%%%%%%%
 @Tile@ is a type synonym that represents the $(x,y)$ coordinates of a
-tile on chess board. The chess board is represented as an algebraic 
+tile on chess board. The chess board is represented as an algebraic
 data type\footnote{And hence we can include it in class @Text@, making it
 @show@able} of an :
 \begin{itemize}
@@ -45,13 +46,19 @@ unnecessary traversal of the trail.
 import Sort(quickSort)
 
 type Tile     = (Int,Int)
-data ChessSet = Board Int Int Tile [Tile]
+data ChessSet = Board Int Int
+#ifdef STRICT_DATA
+                      ~Tile
+#else
+                      Tile
+#endif
+                      [Tile]
 \end{code}
 
 
 %%%%%%%%%%%%%%%%%%%% C L A S S  I N S T A N C E S %%%%%%%%%%%%%%%%%%%
 Various instance declarations for @show@ , @==@ and @<=@. Note the little
-hack with ordinals, we do not want to compare chess sets, but if we have 
+hack with ordinals, we do not want to compare chess sets, but if we have
 for instance a tuple of @(Int,ChessSet)@, then we want to compare on the
 @Int@ part of the tuple. Therefore {\em any} @ChessSet@ is smaller than any
 other.
@@ -61,13 +68,13 @@ instance Eq ChessSet where
     _ == _ = True
 
 instance Ord ChessSet where
-    _ <= _ = True			
+    _ <= _ = True
 
 instance Show ChessSet where
-   showsPrec p board@(Board sze n f ts) 
+   showsPrec p board@(Board sze n f ts)
       = showString (printBoard sze sortedTrail 1)
         where
-	   sortedTrail = quickSort 
+	   sortedTrail = quickSort
 			    (assignMoveNo ts sze n)
 \end{code}
 
@@ -80,7 +87,7 @@ createBoard x t= Board x 1 t [t]
 sizeBoard::ChessSet -> Int
 sizeBoard (Board s _ _ _) = s
 
-noPieces::ChessSet -> Int 
+noPieces::ChessSet -> Int
 noPieces (Board _ n _ _) = n
 
 addPiece::Tile -> ChessSet -> ChessSet
@@ -88,7 +95,7 @@ addPiece t (Board s n f ts) = Board s (n+1) f (t:ts)
 \end{code}
 
 
-@deletePiece@ deletes the $x^{th}$ piece placed on the board, and 
+@deletePiece@ deletes the $x^{th}$ piece placed on the board, and
 depending on the representation ensures the remaining trail is valid
 (i.e info reguarding position in valid).
 
@@ -113,7 +120,7 @@ pieceAtTile x (Board _ _ _ ts)
    = find x ts
      where
 	find x [] = error "Tile not used"
-	find x (y:xs) 
+	find x (y:xs)
 	   | x == y    = 1 + length xs
 	   | otherwise = find x xs
 
@@ -123,7 +130,7 @@ isSquareFree x (Board _ _ _ ts) = x `notElem` ts
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% M I S C %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Various auxiliary functions used above which I would of liked to 
+Various auxiliary functions used above which I would of liked to
 include in @where@ clauses if they were not so large.
 
 \begin{code}
@@ -137,9 +144,9 @@ printBoard s [] n
    | (n `mod` s /=0)= "*"++(spaces (s*s) 1) ++(printBoard s [] (n+1))
    | (n `mod` s ==0)= "*\n"                 ++(printBoard s [] (n+1))
 printBoard s trail@((i,j):xs) n
-   | (i==n) && 
+   | (i==n) &&
      (n `mod` s ==0)= (show j)++"\n"++(printBoard s xs (n+1))
-   | (i==n) && 
+   | (i==n) &&
      (n `mod` s /=0)= (show j)++(spaces (s*s) j)++(printBoard s xs    (n+1))
    | (n `mod` s /=0)= "*"     ++(spaces (s*s) 1)++(printBoard s trail (n+1))
    | (n `mod` s ==0)= "*\n"                     ++(printBoard s trail (n+1))

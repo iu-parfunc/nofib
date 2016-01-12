@@ -41,9 +41,9 @@ GHC_BIN_DIR="$(GHC_BIN_DIR)"/bin
 HC="$(GHC_BIN_DIR)"/ghc-stage2
 BOOT_HC="$(HC)"
 
-iu: dependencies normal strict
+iu: iudependencies iunormal iustrict
 
-dependencies:
+iudependencies:
 	# We need to install html, regex-base, regex-compat, and mtl with GHC HEAD.
 	# Unfortunately, neither html, regex-base, nor regex-compat have git repos as
 	# far as I am aware, so I simply made local copies of them.
@@ -72,12 +72,11 @@ dependencies:
 	&& "$(GHC_BIN_DIR)"/runghc Setup build \
 	&& "$(GHC_BIN_DIR)"/runghc Setup install
 
-normal:
-	make clean
+iuboot:
 	make -e boot
+
+iunormal:
 	make -e 2>&1 | tee nofib-log-normal
 
-strict:
-	make clean
-	make -e boot
-	make -e 2>&1 | tee nofib-log-strict
+iustrict:
+	make -e EXTRA_HC_OPTS="-XStrictData -DSTRICT_DATA" 2>&1 | tee nofib-log-strict

@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# OPTIONS_GHC -fno-warn-missing-methods #-}
 {- 	Taken from Doug McIlroy's paper
 	"Power series, power serious"
@@ -11,7 +12,7 @@ import Data.Ratio
 import System.Environment (getArgs)
 
 infixl 7 .*
-infixr 5 :+: 
+infixr 5 :+:
 
 default (Integer, Rational, Double)
 
@@ -20,9 +21,9 @@ main = do { (n:_) <- getArgs ;
 	    putStrLn (show (extract p (sinx - sqrt (1-cosx^2)))) ;
 	    putStrLn (show (extract p (sinx/cosx - revert (integral (1/(1+x^2)))))) ;
 	    putStrLn (show (extract p ts)) ;
-	    putStrLn (show (extract p tree)) 
+	    putStrLn (show (extract p tree))
 	  }
-	
+
 
 -- From Section 6
 tree   = 0 :+: forest
@@ -30,10 +31,15 @@ forest = compose list tree
 list   = 1 :+: list
 
 ts = 1 :+: ts^2
-	
+
 
 -- The main implementation follows
-data Ps a = Pz | a :+: Ps a
+data Ps a = Pz
+#ifdef STRICT_DATA
+          | a :+: ~(Ps a)
+#else
+          | a :+:   Ps a
+#endif
 
 extract :: Int -> Ps a -> [a]
 extract 0 ps 	     = []
