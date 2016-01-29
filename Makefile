@@ -52,7 +52,7 @@ iudependencies:
 	&& "$(GHC_BIN_DIR)"/runghc Setup build \
 	&& "$(GHC_BIN_DIR)"/runghc Setup install
 
-	cd mtl/ \
+	cd mtl-2.2.1/ \
 	&& "$(GHC_BIN_DIR)"/runghc Setup configure --with-ghc="$(HC)" --prefix="$(GHC_INPLACE_DIR)" \
 	&& "$(GHC_BIN_DIR)"/runghc Setup build \
 	&& "$(GHC_BIN_DIR)"/runghc Setup install \
