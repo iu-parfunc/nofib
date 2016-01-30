@@ -4,7 +4,7 @@ set -xe
 
 WORKDIR=`pwd`
 GHC_TOP_DIR="${HOME}"/opt/ghc-8.0.0-20160111
-LOG_DIR="${HOME}"/nofib-results
+LOG_DIR="${HOME}"/results_backup
 GHC_BIN_DIR="${GHC_TOP_DIR}"/bin
 
 LOG_EXT=.lgfile
