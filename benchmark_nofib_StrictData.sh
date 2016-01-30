@@ -39,7 +39,6 @@ export PATH=${GHC_BIN_DIR}:$PATH
   && runghc Setup build \
   && runghc Setup install )
 
-make clean
 make boot
 make 2>&1 | tee ${LOG_NORMAL}
 
