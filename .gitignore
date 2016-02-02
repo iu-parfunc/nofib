@@ -1,8 +1,4 @@
-nofib-log-normal-*.lgfile
-nofib-log-strict-*.lgfile
-nofib-log-ubxsums-*.lgfile
-nofib-comp-normal-strict-*.lgfile
-nofib-comp-normal-ubxsums-*.lgfile
+*.lgfile
 
 html-1.0.1.2/dist
 mtl-2.2.1/dist

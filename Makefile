@@ -34,3 +34,6 @@ dist :: nofib-dist-pre
 include $(TOP)/mk/target.mk
 dist :: dist-post
 dist :: dist-package
+
+clean-logs:
+	rm -f *.lgfile
