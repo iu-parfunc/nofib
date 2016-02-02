@@ -2,7 +2,7 @@
 
 set -xe
 
-GHC_TOP_DIR="${HOME}"/opt/ghc-unboxed-sums-1.1
+GHC_TOP_DIR="${HOME}"/opt/ghc-unboxed-sums-1.2
 LOG_DIR="${HOME}"/results_backup
 GHC_BIN_DIR="${GHC_TOP_DIR}"/bin
 LOG_EXT=.lgfile
