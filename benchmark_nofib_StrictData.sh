@@ -12,6 +12,7 @@ LOG_STRICT=nofib-log-strict-$(date -d "today" +"%Y%m%d%H%M")${LOG_EXT}
 LOG_UBXSUMS=nofib-log-ubxsums-$(date -d "today" +"%Y%m%d%H%M")${LOG_EXT}
 COMP_NORMAL_STRICT=nofib-comp-normal-strict-$(date -d "today" +"%Y%m%d%H%M")${LOG_EXT}
 COMP_NORMAL_UBXSUMS=nofib-comp-normal-ubxsums-$(date -d "today" +"%Y%m%d%H%M")${LOG_EXT}
+COMP_STRICT_UBXSUMS=nofib-comp-strict-ubxsums-$(date -d "today" +"%Y%m%d%H%M")${LOG_EXT}
 
 STRICT_FLAGS="-XStrictData -DSTRICT_DATA"
 UBXSUMS_FLAGS="${STRICT_FLAGS} -funbox-small-strict-sums=2"
@@ -56,9 +57,11 @@ make EXTRA_HC_OPTS="${UBXSUMS_FLAGS}" 2>&1 | tee ${LOG_UBXSUMS}
 
 nofib-analyse/nofib-analyse ${LOG_NORMAL} ${LOG_STRICT}  > ${COMP_NORMAL_STRICT}
 nofib-analyse/nofib-analyse ${LOG_NORMAL} ${LOG_UBXSUMS} > ${COMP_NORMAL_UBXSUMS}
+nofib-analyse/nofib-analyse ${LOG_STRICT} ${LOG_UBXSUMS} > ${COMP_STRICT_UBXSUMS}
 
 cp ${LOG_NORMAL}          "${LOG_DIR}"/
 cp ${LOG_STRICT}          "${LOG_DIR}"/
 cp ${LOG_UBXSUMS}         "${LOG_DIR}"/
 cp ${COMP_NORMAL_STRICT}  "${LOG_DIR}"/
 cp ${COMP_NORMAL_UBXSUMS} "${LOG_DIR}"/
+cp ${COMP_STRICT_UBXSUMS} "${LOG_DIR}"/
