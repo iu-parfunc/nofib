@@ -144,6 +144,7 @@ mreads_spec  = SpecP "Memory Reads" "Reads" "mem-reads" mem_reads run_status alw
 mwrite_spec  = SpecP "Memory Writes" "Writes" "mem-writes" mem_writes run_status always_ok
 cmiss_spec   = SpecP "Cache Misses" "Misses" "cache-misses" cache_misses run_status always_ok
 totmem_spec   = SpecP "Total Memory in use" "TotalMem" "total-mem" (meanInt total_memory) run_status always_ok
+sum_unboxes_spec = SpecP "Sum Unboxes" "SumUbxs" "sum-ubxs" (Just . sum_unboxes) run_status always_ok
 
 all_specs :: [PerProgTableSpec]
 all_specs = [
@@ -167,7 +168,8 @@ all_specs = [
   mreads_spec,
   mwrite_spec,
   cmiss_spec,
-  totmem_spec
+  totmem_spec,
+  sum_unboxes_spec
   ]
 
 namedColumns :: [String] -> IO [PerProgTableSpec]

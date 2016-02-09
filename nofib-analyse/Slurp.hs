@@ -54,7 +54,8 @@ data Results = Results {
         allocs          :: [Integer],
         run_status      :: Status,
         compile_status  :: Status,
-        total_memory    :: [Integer]
+        total_memory    :: [Integer],
+        sum_unboxes     :: Int
         }
 
 emptyResults :: Results
@@ -85,7 +86,8 @@ emptyResults = Results {
         allocs          = [],
         compile_status  = NotDone,
         run_status      = NotDone,
-        total_memory    = []
+        total_memory    = [],
+	sum_unboxes     = 0
         }
 
 -----------------------------------------------------------------------------
@@ -212,6 +214,10 @@ wrong_output      = mkRegex "^expected (stdout|stderr) not matched by reality$"
 out_of_heap       = mkRegex "^\\+ Heap exhausted;$"
 out_of_stack      = mkRegex "^\\+ Stack space overflow:"
 
+-- Matches the debug output that is emitted when a DataCon is unpacked
+unboxed_sum_re :: String -> Maybe (String, String, String)
+unboxed_sum_re = matchRegex $ mkRegex "Decided to unpack field with type[ \\t]+([A-Za-z0-9_-]+)[ \\n\\t]+in DataCon:[ \\t]+([A-Za-z0-9_-]+)[ \\t]+of type:[ \\t]+([A-Za-z0-9_-]+)"
+
 parse_log :: String -> ResultTable
 parse_log
         = combine_results               -- collate information
@@ -241,7 +247,8 @@ combine2Results
                       balance = b1,
                       binary_size = bs1, allocs = al1,
                       run_status = rs1, compile_status = cs1,
-                      total_memory = tm1 }
+                      total_memory = tm1,
+                      sum_unboxes = su1 }
              Results{ compile_time = ct2, link_time = lt2,
                       compile_allocs = ca2,
                       module_size = ms2,
@@ -255,7 +262,8 @@ combine2Results
                       balance = b2,
                       binary_size = bs2, allocs = al2,
                       run_status = rs2, compile_status = cs2,
-                      total_memory = tm2 }
+                      total_memory = tm2,
+                      sum_unboxes = su2 }
           =  Results{ compile_time   = Map.unionWith (flip const) ct1 ct2,
                       compile_allocs = Map.unionWith (flip const) ca1 ca2,
                       module_size    = Map.unionWith (flip const) ms1 ms2,
@@ -282,7 +290,8 @@ combine2Results
                       allocs         = al1 ++ al2,
                       run_status     = combStatus rs1 rs2,
                       compile_status = combStatus cs1 cs2,
-                      total_memory   = tm1 ++ tm2 }
+                      total_memory   = tm1 ++ tm2,
+                      sum_unboxes    = su1 + su2 }
 
 combStatus :: Status -> Status -> Status
 combStatus NotDone y       = y
@@ -331,8 +340,13 @@ parse_compile_time progName modName (l:ls) =
               got_compile_result allocations initialisation mut gc;
             Nothing ->
 
+        case unboxed_sum_re l of {
+           Just (_, _, _) ->
+              [(progName, emptyResuls { sum_unboxes = 1 })];
+           Nothing ->
+
                 parse_compile_time progName modName ls
-        }}}}
+        }}}}}
   where got_compile_result allocations initialisation mut gc =
           let ct = Map.singleton modName (initialisation + mut + gc)
               ca = Map.singleton modName allocations
