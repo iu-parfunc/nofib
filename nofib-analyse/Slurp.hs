@@ -215,11 +215,11 @@ out_of_heap       = mkRegex "^\\+ Heap exhausted;$"
 out_of_stack      = mkRegex "^\\+ Stack space overflow:"
 
 -- Matches the debug output that is emitted when a DataCon is unpacked
-unboxed_sum_re :: String -> Maybe (String, String, String)
+unboxed_sum_re :: String -> Bool
 unboxed_sum_re s = case matchRegex re s of
-                        Just [a,b,c] -> Just (a,b,c)
-                        Nothing      -> Nothing
-    where re = mkRegex "^Decided to unpack field with type[ \\t]+([A-Za-z0-9_-]+)[ \\n\\t]+in DataCon:[ \\t]+([A-Za-z0-9_-]+)[ \\t]+of type:[ \\t]+([A-Za-z0-9_-]+)"
+                        Just{} -> True
+                        Nothing-> False
+    where re = mkRegex "^[ \t]*Decided to unpack field with type"
 
 parse_log :: String -> ResultTable
 parse_log
@@ -311,7 +311,8 @@ chunk_log header chunk (l:ls) =
 process_chunk :: ([String],[String]) -> [(String,Results)]
 process_chunk (progName : what : modName : _, chk) =
  case what of
-        "time to compile" -> parse_compile_time progName modName chk
+        "time to compile" -> parse_sum_unboxes progName chk
+                          ++ parse_compile_time progName modName chk
         "time to run"     -> parse_run_time progName (reverse chk) emptyResults NotDone
         "time to compile & run" -> parse_compile_time progName modName chk
                                 ++ parse_run_time progName (reverse chk) emptyResults NotDone
@@ -319,6 +320,13 @@ process_chunk (progName : what : modName : _, chk) =
         "size of"         -> parse_size progName modName chk
         _                 -> error ("process_chunk: "++what)
 process_chunk _ = error "process_chunk: Can't happen"
+
+parse_sum_unboxes :: String -> [String] -> [(String, Results)]
+parse_sum_unboxes _ [] = []
+parse_sum_unboxes progName (l:ls) =
+  case unboxed_sum_re l of
+     True  -> [(progName, emptyResults { sum_unboxes = 1 })]
+     False -> parse_sum_unboxes progName ls
 
 parse_compile_time :: String -> String -> [String] -> [(String, Results)]
 parse_compile_time _    _   [] = []
@@ -343,13 +351,8 @@ parse_compile_time progName modName (l:ls) =
               got_compile_result allocations initialisation mut gc;
             Nothing ->
 
-        case unboxed_sum_re l of {
-           Just (_, _, _) ->
-              [(progName, emptyResults { sum_unboxes = 1 })];
-           Nothing ->
-
                 parse_compile_time progName modName ls
-        }}}}}
+        }}}}
   where got_compile_result allocations initialisation mut gc =
           let ct = Map.singleton modName (initialisation + mut + gc)
               ca = Map.singleton modName allocations

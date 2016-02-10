@@ -144,7 +144,7 @@ mreads_spec  = SpecP "Memory Reads" "Reads" "mem-reads" mem_reads run_status alw
 mwrite_spec  = SpecP "Memory Writes" "Writes" "mem-writes" mem_writes run_status always_ok
 cmiss_spec   = SpecP "Cache Misses" "Misses" "cache-misses" cache_misses run_status always_ok
 totmem_spec   = SpecP "Total Memory in use" "TotalMem" "total-mem" (meanInt total_memory) run_status always_ok
-sum_unboxes_spec = SpecP "Sum Unboxes" "SumUbxs" "sum-ubxs" (Just . sum_unboxes) run_status always_ok
+sum_unboxes_spec = SpecP "Sum Unboxes" "SumUbxs" "sum-ubxs" (Just . sum_unboxes) run_status (const False)
 
 all_specs :: [PerProgTableSpec]
 all_specs = [
@@ -226,7 +226,7 @@ per_prog_result_tab =
 -- aspects, each in its own column.  Only works when comparing at least two runs.
 normal_summary_specs :: [PerProgTableSpec]
 normal_summary_specs =
-        [ size_spec, alloc_spec, runtime_spec, elapsedtime_spec, totmem_spec, sum_unboxes_spec ]
+        [ size_spec, alloc_spec, runtime_spec, elapsedtime_spec, totmem_spec ]
 
 cachegrind_summary_specs :: [PerProgTableSpec]
 cachegrind_summary_specs =
