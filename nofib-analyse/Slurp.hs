@@ -87,7 +87,7 @@ emptyResults = Results {
         compile_status  = NotDone,
         run_status      = NotDone,
         total_memory    = [],
-	sum_unboxes     = 0
+        sum_unboxes     = 0
         }
 
 -----------------------------------------------------------------------------
@@ -216,7 +216,10 @@ out_of_stack      = mkRegex "^\\+ Stack space overflow:"
 
 -- Matches the debug output that is emitted when a DataCon is unpacked
 unboxed_sum_re :: String -> Maybe (String, String, String)
-unboxed_sum_re = matchRegex $ mkRegex "Decided to unpack field with type[ \\t]+([A-Za-z0-9_-]+)[ \\n\\t]+in DataCon:[ \\t]+([A-Za-z0-9_-]+)[ \\t]+of type:[ \\t]+([A-Za-z0-9_-]+)"
+unboxed_sum_re s = case matchRegex re s of
+                        Just [a,b,c] -> Just (a,b,c)
+                        Nothing      -> Nothing
+    where re = mkRegex "^Decided to unpack field with type[ \\t]+([A-Za-z0-9_-]+)[ \\n\\t]+in DataCon:[ \\t]+([A-Za-z0-9_-]+)[ \\t]+of type:[ \\t]+([A-Za-z0-9_-]+)"
 
 parse_log :: String -> ResultTable
 parse_log
@@ -342,7 +345,7 @@ parse_compile_time progName modName (l:ls) =
 
         case unboxed_sum_re l of {
            Just (_, _, _) ->
-              [(progName, emptyResuls { sum_unboxes = 1 })];
+              [(progName, emptyResults { sum_unboxes = 1 })];
            Nothing ->
 
                 parse_compile_time progName modName ls

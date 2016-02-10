@@ -220,13 +220,13 @@ per_prog_result_tab :: [PerProgTableSpec]
 per_prog_result_tab =
         [ size_spec, alloc_spec, runtime_spec, elapsedtime_spec, muttime_spec, mutetime_spec, gctime_spec,
           gcelap_spec, gc0count_spec, gc0time_spec, gc0elap_spec, gc1count_spec, gc1time_spec, gc1elap_spec,
-          gcwork_spec, balance_spec, instrs_spec, mreads_spec, mwrite_spec, cmiss_spec, totmem_spec]
+          gcwork_spec, balance_spec, instrs_spec, mreads_spec, mwrite_spec, cmiss_spec, totmem_spec, sum_unboxes_spec ]
 
 -- A single summary table, giving comparison figures for a number of
 -- aspects, each in its own column.  Only works when comparing at least two runs.
 normal_summary_specs :: [PerProgTableSpec]
 normal_summary_specs =
-        [ size_spec, alloc_spec, runtime_spec, elapsedtime_spec, totmem_spec ]
+        [ size_spec, alloc_spec, runtime_spec, elapsedtime_spec, totmem_spec, sum_unboxes_spec ]
 
 cachegrind_summary_specs :: [PerProgTableSpec]
 cachegrind_summary_specs =
