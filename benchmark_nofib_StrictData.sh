@@ -2,67 +2,125 @@
 
 set -xe
 
-GHC_TOP_DIR="${HOME}"/opt/ghc-unboxed-sums-1.3
-LOG_DIR="${HOME}"/results_backup
-GHC_BIN_DIR="${GHC_TOP_DIR}"/bin
+OURHOME=/u/crest-team
+LOG_DIR="${OURHOME}"/results_backup
 LOG_EXT=.lgfile
 
-LOG_NORMAL=nofib-log-normal-$(date -d "today" +"%Y%m%d%H%M")${LOG_EXT}
-LOG_STRICT=nofib-log-strict-$(date -d "today" +"%Y%m%d%H%M")${LOG_EXT}
-LOG_UBXSUMS=nofib-log-ubxsums-$(date -d "today" +"%Y%m%d%H%M")${LOG_EXT}
-COMP_NORMAL_STRICT=nofib-comp-normal-strict-$(date -d "today" +"%Y%m%d%H%M")${LOG_EXT}
-COMP_NORMAL_UBXSUMS=nofib-comp-normal-ubxsums-$(date -d "today" +"%Y%m%d%H%M")${LOG_EXT}
-COMP_STRICT_UBXSUMS=nofib-comp-strict-ubxsums-$(date -d "today" +"%Y%m%d%H%M")${LOG_EXT}
+STOCK_GHC_TOP_DIR="${OURHOME}"/opt/ghc-8.1
+STOCK_GHC_BIN_DIR="${STOCK_GHC_TOP_DIR}"/bin
+
+UBXSUMS_GHC_TOP_DIR="${OURHOME}"/opt/ghc-unboxed-sums-1.5
+UBXSUMS_GHC_BIN_DIR="${UBXSUMS_GHC_TOP_DIR}"/bin
+
+LOG_STOCK_NORMAL=$(date -d "today" +"%Y%m%d%H%M")-nofib-log-stock-normal${LOG_EXT}
+LOG_STOCK_STRICT=$(date -d "today" +"%Y%m%d%H%M")-nofib-log-stock-strict${LOG_EXT}
+LOG_UBXSUMS_NORMAL=$(date -d "today" +"%Y%m%d%H%M")-nofib-log-ubxsums-normal${LOG_EXT}
+LOG_UBXSUMS_STRICT=$(date -d "today" +"%Y%m%d%H%M")-nofib-log-ubxsums-strict${LOG_EXT}
+LOG_UBXSUMS_FUNBOXSSS=$(date -d "today" +"%Y%m%d%H%M")-nofib-log-ubxsums-funboxsss${LOG_EXT}
+COMP_STOCK_STRICT=$(date -d "today" +"%Y%m%d%H%M")-nofib-comp-stock-strict${LOG_EXT}
+COMP_UBXSUMS_NORMAL=$(date -d "today" +"%Y%m%d%H%M")-nofib-comp-ubxsums-normal${LOG_EXT}
+COMP_UBXSUMS_STRICT=$(date -d "today" +"%Y%m%d%H%M")-nofib-comp-ubxsums-strict${LOG_EXT}
+COMP_UBXSUMS_FUNBOXSSS=$(date -d "today" +"%Y%m%d%H%M")-nofib-comp-ubxsums-funboxsss${LOG_EXT}
 
 STRICT_FLAGS="-XStrictData -DSTRICT_DATA"
-UBXSUMS_FLAGS="${STRICT_FLAGS} -funbox-small-strict-sums=2"
+FUNBOXSSS_FLAGS="${STRICT_FLAGS} -funbox-small-strict-sums"
 
-export PATH=${GHC_BIN_DIR}:$PATH
+export PATH=${STOCK_GHC_BIN_DIR}:$PATH
 
 ( cd html-1.0.1.2/ \
-  && runghc Setup configure --prefix="${GHC_TOP_DIR}" \
+  && runghc Setup clean \
+  && runghc Setup configure --prefix="${STOCK_GHC_TOP_DIR}" \
   && runghc Setup build \
   && runghc Setup install )
 
 ( cd mtl-2.2.1/ \
-  && runghc Setup configure --prefix="${GHC_TOP_DIR}" \
+  && runghc Setup clean \
+  && runghc Setup configure --prefix="${STOCK_GHC_TOP_DIR}" \
   && runghc Setup build \
   && runghc Setup install )
 
 ( cd regex-base-0.93.2/ \
-  && runghc Setup configure --prefix="${GHC_TOP_DIR}" \
+  && runghc Setup clean \
+  && runghc Setup configure --prefix="${STOCK_GHC_TOP_DIR}" \
   && runghc Setup build \
   && runghc Setup install )
 
 ( cd regex-posix-0.95.2/ \
-  && runghc Setup configure --prefix="${GHC_TOP_DIR}" \
+  && runghc Setup clean \
+  && runghc Setup configure --prefix="${STOCK_GHC_TOP_DIR}" \
   && runghc Setup build \
   && runghc Setup install )
 
 ( cd regex-compat-0.95.1/ \
-  && runghc Setup configure --prefix="${GHC_TOP_DIR}" \
+  && runghc Setup clean \
+  && runghc Setup configure --prefix="${STOCK_GHC_TOP_DIR}" \
   && runghc Setup build \
   && runghc Setup install )
 
 make clean
 make boot
-make 2>&1 | tee ${LOG_NORMAL}
+make 2>&1 | tee ${LOG_STOCK_NORMAL}
 
 make clean
 make boot
-make EXTRA_HC_OPTS="${STRICT_FLAGS}" 2>&1 | tee ${LOG_STRICT}
+make EXTRA_HC_OPTS="${STRICT_FLAGS}" 2>&1 | tee ${LOG_STOCK_STRICT}
+
+export PATH=${UBXSUMS_GHC_BIN_DIR}:$PATH
+
+( cd html-1.0.1.2/ \
+  && runghc Setup clean \
+  && runghc Setup configure --prefix="${UBXSUMS_GHC_TOP_DIR}" \
+  && runghc Setup build \
+  && runghc Setup install )
+
+( cd mtl-2.2.1/ \
+  && runghc Setup clean \
+  && runghc Setup configure --prefix="${UBXSUMS_GHC_TOP_DIR}" \
+  && runghc Setup build \
+  && runghc Setup install )
+
+( cd regex-base-0.93.2/ \
+  && runghc Setup clean \
+  && runghc Setup configure --prefix="${UBXSUMS_GHC_TOP_DIR}" \
+  && runghc Setup build \
+  && runghc Setup install )
+
+( cd regex-posix-0.95.2/ \
+  && runghc Setup clean \
+  && runghc Setup configure --prefix="${UBXSUMS_GHC_TOP_DIR}" \
+  && runghc Setup build \
+  && runghc Setup install )
+
+( cd regex-compat-0.95.1/ \
+  && runghc Setup clean \
+  && runghc Setup configure --prefix="${UBXSUMS_GHC_TOP_DIR}" \
+  && runghc Setup build \
+  && runghc Setup install )
 
 make clean
 make boot
-make EXTRA_HC_OPTS="${UBXSUMS_FLAGS}" 2>&1 | tee ${LOG_UBXSUMS}
+make 2>&1 | tee ${LOG_UBXSUMS_NORMAL}
 
-nofib-analyse/nofib-analyse ${LOG_NORMAL} ${LOG_STRICT}  > ${COMP_NORMAL_STRICT}
-nofib-analyse/nofib-analyse ${LOG_NORMAL} ${LOG_UBXSUMS} > ${COMP_NORMAL_UBXSUMS}
-nofib-analyse/nofib-analyse ${LOG_STRICT} ${LOG_UBXSUMS} > ${COMP_STRICT_UBXSUMS}
+make clean
+make boot
+make EXTRA_HC_OPTS="${STRICT_FLAGS}" 2>&1 | tee ${LOG_UBXSUMS_STRICT}
 
-cp ${LOG_NORMAL}          "${LOG_DIR}"/
-cp ${LOG_STRICT}          "${LOG_DIR}"/
-cp ${LOG_UBXSUMS}         "${LOG_DIR}"/
-cp ${COMP_NORMAL_STRICT}  "${LOG_DIR}"/
-cp ${COMP_NORMAL_UBXSUMS} "${LOG_DIR}"/
-cp ${COMP_STRICT_UBXSUMS} "${LOG_DIR}"/
+make clean
+make boot
+make EXTRA_HC_OPTS="${FUNBOXSSS_FLAGS}" 2>&1 | tee ${LOG_UBXSUMS_FUNBOXSSS}
+
+nofib-analyse/nofib-analyse ${LOG_STOCK_NORMAL} ${LOG_STOCK_STRICT}      > ${COMP_STOCK_STRICT}
+nofib-analyse/nofib-analyse ${LOG_STOCK_NORMAL} ${LOG_UBXSUMS_NORMAL}    > ${COMP_UBXSUMS_NORMAL}
+nofib-analyse/nofib-analyse ${LOG_STOCK_NORMAL} ${LOG_UBXSUMS_STRICT}    > ${COMP_UBXSUMS_STRICT}
+nofib-analyse/nofib-analyse ${LOG_STOCK_NORMAL} ${LOG_UBXSUMS_FUNBOXSSS} > ${COMP_UBXSUMS_FUNBOXSSS}
+
+cp ${LOG_STOCK_NORMAL}       "${LOG_DIR}"/
+cp ${LOG_STOCK_STRICT}       "${LOG_DIR}"/
+cp ${LOG_UBXSUMS_NORMAL}     "${LOG_DIR}"/
+cp ${LOG_UBXSUMS_STRICT}     "${LOG_DIR}"/
+cp ${LOG_UBXSUMS_FUNBOXSSS}  "${LOG_DIR}"/
+
+cp ${COMP_STOCK_STRICT}      "${LOG_DIR}"/
+cp ${COMP_UBXSUMS_NORMAL}    "${LOG_DIR}"/
+cp ${COMP_UBXSUMS_STRICT}    "${LOG_DIR}"/
+cp ${COMP_UBXSUMS_FUNBOXSSS} "${LOG_DIR}"/

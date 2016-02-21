@@ -2,7 +2,6 @@ TOP = ..
 include $(TOP)/mk/boilerplate.mk
 
 # commented out tests:
-# * circsim (this yields a RTS error with -XStrictData on)
 SUBDIRS = ansi \
           atom \
           awards \
@@ -11,6 +10,7 @@ SUBDIRS = ansi \
           boyer2 \
           calendar \
           cichelli \
+          circsim \
           clausify \
           constraints \
           cryptarithm1 \
