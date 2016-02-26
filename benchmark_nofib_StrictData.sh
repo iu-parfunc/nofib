@@ -10,6 +10,8 @@ LOG_EXT=.lgfile
 DATE=$(date -d "today" +"%Y%m%d%H%M")
 LOG_NAME=${DATE}-nofib-${UBOX_BRANCH}-strictdata-${UBOX_STRICT_DATA}-funboxsmallstrictsums-${UBOX_THRESHOLD}${LOG_EXT}
 
+echo "Benchmark results will go in: ${LOG_NAME}"
+
 if [ "${UBOX_BRANCH}" == "stock" ]; then
     echo "Using stock GHC"
     GHC_TOP_DIR="${HOME}"/opt/ghc-8.1
@@ -26,12 +28,12 @@ if [ "${UBOX_STRICT_DATA}" == "1" ]; then
     EXTRA_NOFIB_FLAGS+=" -XStrictData -DSTRICT_DATA"
 fi
 
-if [ "${UBOX_BRANCH}" != "stock" && "${UBOX_THRESHOLD}" != "none" ]; then
+if [[ ("${UBOX_BRANCH}" != "stock") && ("${UBOX_THRESHOLD}" != "none") ]]; then
     echo "Using -funbox-small-strict-sums=${UBOX_THRESHOLD}"
     EXTRA_NOFIB_FLAGS+=" -funbox-small-strict-sums=${UBOX_THRESHOLD}"
 fi
 
-"${GHC_BIN_DIR}"/ghc-pkg init "${DEPENDENCY_BUILD_DIR}"
+"${GHC_BIN_DIR}"/ghc-pkg init "${DEPENDENCY_PKG_DIR}"
 export PATH="${GHC_BIN_DIR}":$PATH
 
 ( cd html-1.0.1.2/ \
@@ -71,6 +73,6 @@ export PATH="${GHC_BIN_DIR}":$PATH
 
 make clean
 make boot
-make EXTRA_HC_OPTS="${EXTRA_NOFIB_FLAGS}" 2>&1 | tee ${LOG_NAME}
+make EXTRA_HC_OPTS="-package-db ${DEPENDENCY_PKG_DIR} ${EXTRA_NOFIB_FLAGS}" 2>&1 | tee ${LOG_NAME}
 
 cp ${LOG_NAME} "${LOG_DIR}"/
