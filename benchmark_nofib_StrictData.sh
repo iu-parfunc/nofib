@@ -17,7 +17,7 @@ if [ "${UBOX_BRANCH}" == "stock" ]; then
     GHC_TOP_DIR="${HOME}"/opt/ghc-8.1
 else
     echo "Using our version of GHC (with worker/wrapper)"
-    GHC_TOP_DIR="${HOME}"
+    GHC_TOP_DIR="${HOME}"/opt/ghc-unboxed-sums-1.5
 fi
 
 GHC_BIN_DIR="${GHC_TOP_DIR}"/bin
