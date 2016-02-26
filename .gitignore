@@ -1,11 +1,13 @@
 *.lgfile
 
+build_junk_here/
 html-1.0.1.2/dist
 mtl-2.2.1/dist
 regex-posix-0.95.2/dist
 regex-base-0.93.2/dist
 regex-compat-0.95.1/dist
 share/
+put_junk_here/
 
 # Generated file patterns
 *.o
