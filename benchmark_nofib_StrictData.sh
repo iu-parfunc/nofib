@@ -33,6 +33,9 @@ if [[ ("${UBOX_BRANCH}" != "stock") && ("${UBOX_THRESHOLD}" != "none") ]]; then
     EXTRA_NOFIB_FLAGS+=" -funbox-small-strict-sums=${UBOX_THRESHOLD}"
 fi
 
+rm -rf "${DEPENDENCY_PKG_DIR}"
+rm -rf "${DEPENDENCY_BUILD_DIR}"
+
 "${GHC_BIN_DIR}"/ghc-pkg init "${DEPENDENCY_PKG_DIR}"
 export PATH="${GHC_BIN_DIR}":$PATH
 
