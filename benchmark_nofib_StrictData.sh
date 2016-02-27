@@ -28,7 +28,10 @@ if [ "${UBOX_STRICT_DATA}" == "1" ]; then
     EXTRA_NOFIB_FLAGS+=" -XStrictData -DSTRICT_DATA"
 fi
 
-if [[ ("${UBOX_BRANCH}" != "stock") && ("${UBOX_THRESHOLD}" != "none") ]]; then
+if   [[ ("${UBOX_BRANCH}" == "stock") && ("${UBOX_THRESHOLD}" != "none") ]]; then
+    echo "Invalid configuration, amigo."
+    exit 0
+elif [[ ("${UBOX_BRANCH}" != "stock") && ("${UBOX_THRESHOLD}" != "none") ]]; then
     echo "Using -funbox-small-strict-sums=${UBOX_THRESHOLD}"
     EXTRA_NOFIB_FLAGS+=" -funbox-small-strict-sums=${UBOX_THRESHOLD}"
 fi
