@@ -8,7 +8,7 @@ DEPENDENCY_BUILD_DIR="${CURRENT_DIR}"/build_junk_here
 LOG_DIR="${HOME}"/results_backup
 LOG_EXT=.lgfile
 DATE=$(date -d "today" +"%Y%m%d%H%M")
-LOG_NAME=nofib-log-${JOB_NAME}-date-${DATE}-node-${NODE_NAME}-branch-${UBOX_BRANCH}-strictdata-${UBOX_STRICT_DATA}-funboxsmallstrictsums-${UBOX_THRESHOLD}${LOG_EXT}
+LOG_NAME=nofib-log-jenkinsbuild-${BUILD_NUMBER}-date-${DATE}-node-${NODE_NAME}-branch-${UBOX_BRANCH}-strictdata-${UBOX_STRICT_DATA}-funboxsmallstrictsums-${UBOX_THRESHOLD}${LOG_EXT}
 
 echo "Benchmark results will go in: ${LOG_NAME}"
 
