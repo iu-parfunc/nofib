@@ -5,10 +5,10 @@ set -xe
 CURRENT_DIR=`pwd`
 DEPENDENCY_PKG_DIR="${CURRENT_DIR}"/register_junk_here
 DEPENDENCY_BUILD_DIR="${CURRENT_DIR}"/build_junk_here
-LOG_DIR="${HOME}"/results_backup
+LOG_DIR=${HOME}/nofib-jenkinsbuild-${BUILD_NUMBER}/results_backup
 LOG_EXT=.lgfile
 DATE=$(date -d "today" +"%Y%m%d%H%M")
-LOG_NAME=nofib-log-jenkinsbuild-${BUILD_NUMBER}-date-${DATE}-node-${NODE_NAME}-branch-${UBOX_BRANCH}-strictdata-${UBOX_STRICT_DATA}-funboxsmallstrictsums-${UBOX_THRESHOLD}${LOG_EXT}
+LOG_NAME=log-node-${NODE_NAME}-branch-${UBOX_BRANCH}-strictdata-${UBOX_STRICT_DATA}-funboxsmallstrictsums-${UBOX_THRESHOLD}${LOG_EXT}
 
 echo "Benchmark results will go in: ${LOG_NAME}"
 
@@ -81,4 +81,5 @@ make clean
 make boot
 make EXTRA_HC_OPTS="-package-db ${DEPENDENCY_PKG_DIR} ${EXTRA_NOFIB_FLAGS}" 2>&1 | tee ${LOG_NAME}
 
+mkdir -p "${LOG_DIR}"/
 cp ${LOG_NAME} "${LOG_DIR}"/
