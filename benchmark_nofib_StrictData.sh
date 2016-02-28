@@ -5,7 +5,7 @@ set -xe
 CURRENT_DIR=`pwd`
 DEPENDENCY_PKG_DIR="${CURRENT_DIR}"/register_junk_here
 DEPENDENCY_BUILD_DIR="${CURRENT_DIR}"/build_junk_here
-LOG_DIR=${HOME}/nofib-jenkinsbuild-${BUILD_NUMBER}/results_backup
+LOG_DIR=${HOME}/results_backup/nofib-jenkinsbuild-${BUILD_NUMBER}
 LOG_EXT=.lgfile
 DATE=$(date -d "today" +"%Y%m%d%H%M")
 LOG_NAME=log-node-${NODE_NAME}-branch-${UBOX_BRANCH}-strictdata-${UBOX_STRICT_DATA}-funboxsmallstrictsums-${UBOX_THRESHOLD}${LOG_EXT}

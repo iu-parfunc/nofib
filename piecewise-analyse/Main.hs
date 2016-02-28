@@ -19,7 +19,8 @@ compFileName f1 f2 =
 
 piecewiseAnalyse :: FilePath -> IO ()
 piecewiseAnalyse dir = do
-  files <- getDirectoryContents dir
+  let f filename = filename /= "." && filename /= ".."
+  files <- filter f <$> getDirectoryContents dir
   forM_ files $ \f1 -> forM_ files $ \f2 ->
     when (f1 /= f2) $ do
        stdout <- readProcess "nofib-analyse/nofib-analyse"
