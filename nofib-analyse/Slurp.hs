@@ -55,7 +55,8 @@ data Results = Results {
         run_status      :: Status,
         compile_status  :: Status,
         total_memory    :: [Integer],
-        sum_unboxes     :: Int
+        sum_unboxes     :: Int,
+        sum_ww_cprs     :: Int
         }
 
 emptyResults :: Results
@@ -87,7 +88,8 @@ emptyResults = Results {
         compile_status  = NotDone,
         run_status      = NotDone,
         total_memory    = [],
-        sum_unboxes     = 0
+        sum_unboxes     = 0,
+        sum_ww_cprs     = 0
         }
 
 -----------------------------------------------------------------------------
@@ -221,6 +223,12 @@ unboxed_sum_re s = case matchRegex re s of
                         Nothing-> False
     where re = mkRegex "^[ \t]*Decided to unpack field with type"
 
+sum_ww_cpr_re :: String -> Bool
+sum_ww_cpr_re s = case matchRegex re s of
+                       Just{}  -> True
+                       Nothing -> False
+    where re = mkRegex "^====mkWWcpr==== CPR on sum type in function:"
+
 parse_log :: String -> ResultTable
 parse_log
         = combine_results               -- collate information
@@ -251,7 +259,8 @@ combine2Results
                       binary_size = bs1, allocs = al1,
                       run_status = rs1, compile_status = cs1,
                       total_memory = tm1,
-                      sum_unboxes = su1 }
+                      sum_unboxes = su1,
+                      sum_ww_cprs = swwcpr1 }
              Results{ compile_time = ct2, link_time = lt2,
                       compile_allocs = ca2,
                       module_size = ms2,
@@ -266,7 +275,8 @@ combine2Results
                       binary_size = bs2, allocs = al2,
                       run_status = rs2, compile_status = cs2,
                       total_memory = tm2,
-                      sum_unboxes = su2 }
+                      sum_unboxes = su2,
+                      sum_ww_cprs = swwcpr2 }
           =  Results{ compile_time   = Map.unionWith (flip const) ct1 ct2,
                       compile_allocs = Map.unionWith (flip const) ca1 ca2,
                       module_size    = Map.unionWith (flip const) ms1 ms2,
@@ -294,7 +304,8 @@ combine2Results
                       run_status     = combStatus rs1 rs2,
                       compile_status = combStatus cs1 cs2,
                       total_memory   = tm1 ++ tm2,
-                      sum_unboxes    = su1 + su2 }
+                      sum_unboxes    = su1 + su2,
+                      sum_ww_cprs    = swwcpr1 + swwcpr2 }
 
 combStatus :: Status -> Status -> Status
 combStatus NotDone y       = y
@@ -312,6 +323,7 @@ process_chunk :: ([String],[String]) -> [(String,Results)]
 process_chunk (progName : what : modName : _, chk) =
  case what of
         "time to compile" -> parse_sum_unboxes progName chk
+                          ++ parse_sum_ww_cprs progName chk
                           ++ parse_compile_time progName modName chk
         "time to run"     -> parse_run_time progName (reverse chk) emptyResults NotDone
         "time to compile & run" -> parse_compile_time progName modName chk
@@ -327,6 +339,13 @@ parse_sum_unboxes progName (l:ls) =
   case unboxed_sum_re l of
      True  -> [(progName, emptyResults { sum_unboxes = 1 })]
      False -> parse_sum_unboxes progName ls
+
+parse_sum_ww_cprs :: String -> [String] -> [(String, Results)]
+parse_sum_ww_cprs _ [] = []
+parse_sum_ww_cprs progName (l:ls) =
+  case sum_ww_cpr_re l of
+     True  -> [(progName, emptyResults { sum_ww_cprs = 1 })]
+     False -> parse_sum_ww_cprs progName ls
 
 parse_compile_time :: String -> String -> [String] -> [(String, Results)]
 parse_compile_time _    _   [] = []
