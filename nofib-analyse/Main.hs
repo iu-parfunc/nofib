@@ -146,6 +146,7 @@ cmiss_spec   = SpecP "Cache Misses" "Misses" "cache-misses" cache_misses run_sta
 totmem_spec   = SpecP "Total Memory in use" "TotalMem" "total-mem" (meanInt total_memory) run_status always_ok
 sum_unboxes_spec = SpecP "Sum Unboxes" "SumUbxs" "sum-ubxs" (Just . sum_unboxes) run_status (const False)
 sum_ww_cpr_spec = SpecP "Sum WW CPR" "SumWwCpr" "sum-ww-cpr" (Just . sum_ww_cprs) run_status (const False)
+sum_ww_dmd_spec = SpecP "Sum WW Dmd" "SumWWDmd" "sum-ww-dmd" (Just . sum_ww_dmds) run_status (const False)
 
 all_specs :: [PerProgTableSpec]
 all_specs = [
@@ -171,7 +172,8 @@ all_specs = [
   cmiss_spec,
   totmem_spec,
   sum_unboxes_spec,
-  sum_ww_cpr_spec
+  sum_ww_cpr_spec,
+  sum_ww_dmd_spec
   ]
 
 namedColumns :: [String] -> IO [PerProgTableSpec]
@@ -222,7 +224,7 @@ per_prog_result_tab :: [PerProgTableSpec]
 per_prog_result_tab =
         [ size_spec, alloc_spec, runtime_spec, elapsedtime_spec, muttime_spec, mutetime_spec, gctime_spec,
           gcelap_spec, gc0count_spec, gc0time_spec, gc0elap_spec, gc1count_spec, gc1time_spec, gc1elap_spec,
-          gcwork_spec, balance_spec, instrs_spec, mreads_spec, mwrite_spec, cmiss_spec, totmem_spec, sum_unboxes_spec, sum_ww_cpr_spec ]
+          gcwork_spec, balance_spec, instrs_spec, mreads_spec, mwrite_spec, cmiss_spec, totmem_spec, sum_unboxes_spec, sum_ww_cpr_spec, sum_ww_dmd_spec ]
 
 -- A single summary table, giving comparison figures for a number of
 -- aspects, each in its own column.  Only works when comparing at least two runs.
