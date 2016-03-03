@@ -8,7 +8,7 @@ DEPENDENCY_BUILD_DIR="${CURRENT_DIR}"/build_junk_here
 LOG_DIR=${HOME}/results_backup/nofib-jenkinsbuild-${BUILD_NUMBER}
 LOG_EXT=.lgfile
 DATE=$(date -d "today" +"%Y%m%d%H%M")
-LOG_NAME=log-node-${NODE_NAME}-branch-${UBOX_BRANCH}-strictdata-${UBOX_STRICT_DATA}-funboxsmallstrictsums-${UBOX_THRESHOLD}${LOG_EXT}
+LOG_NAME=log-node-${NODE_NAME}-branch-${UBOX_BRANCH}-strictdata-${UBOX_STRICT_DATA}-funboxsmallstrictsums-${UBOX_FUNBOX_SMALL_STRICT_SUMS}-fdosumdmdww-${UBOX_FDO_SUM_DMD_WW}-fdosumcprww-${UBOX_FDO_SUM_CPR_WW}${LOG_EXT}
 
 echo "Benchmark results will go in: ${LOG_NAME}"
 
@@ -28,12 +28,31 @@ if [ "${UBOX_STRICT_DATA}" == "1" ]; then
     EXTRA_NOFIB_FLAGS+=" -XStrictData -DSTRICT_DATA"
 fi
 
-if   [[ ("${UBOX_BRANCH}" == "stock") && ("${UBOX_THRESHOLD}" != "none") ]]; then
+# -funbox-small-strict-sums=n
+if   [[ ("${UBOX_BRANCH}" == "stock") && ("${UBOX_FUNBOX_SMALL_STRICT_SUMS}" != "none") ]]; then
     echo "Invalid configuration, amigo."
     exit 0
-elif [[ ("${UBOX_BRANCH}" != "stock") && ("${UBOX_THRESHOLD}" != "none") ]]; then
-    echo "Using -funbox-small-strict-sums=${UBOX_THRESHOLD}"
-    EXTRA_NOFIB_FLAGS+=" -funbox-small-strict-sums=${UBOX_THRESHOLD}"
+elif [[ ("${UBOX_BRANCH}" != "stock") && ("${UBOX_FUNBOX_SMALL_STRICT_SUMS}" != "none") ]]; then
+    echo "Using -funbox-small-strict-sums=${UBOX_FUNBOX_SMALL_STRICT_SUMS}"
+    EXTRA_NOFIB_FLAGS+=" -funbox-small-strict-sums=${UBOX_FUNBOX_SMALL_STRICT_SUMS}"
+fi
+
+# -fdo-sum-dmd / -fdo-sum-dmd-ww
+if   [[ ("${UBOX_BRANCH}" == "stock") && ("${UBOX_FDO_SUM_DMD_WW}" == "1") ]]; then
+    echo "Invalid configuration, amigo."
+    exit 0
+elif [[ ("${UBOX_BRANCH}" != "stock") && ("${UBOX_FDO_SUM_DMD_WW}" == "1") ]]; then
+    echo "Using -fdo-sum-dmd and -fdo-sum-dmd-ww"
+    EXTRA_NOFIB_FLAGS+=" -fdo-sum-dmd -fdo-sum-dmd-ww"
+fi
+
+# -fdo-sum-cpr-ww
+if   [[ ("${UBOX_BRANCH}" == "stock") && ("${UBOX_FDO_CPR_WW}" == "1") ]]; then
+    echo "Invalid configuration, amigo."
+    exit 0
+elif [[ ("${UBOX_BRANCH}" != "stock") && ("${UBOX_FDO_CPR_WW}" == "1") ]]; then
+    echo "Using -fdo-sum-cpr-ww"
+    EXTRA_NOFIB_FLAGS+=" -fdo-sum-cpr-ww"
 fi
 
 rm -rf "${DEPENDENCY_PKG_DIR}"

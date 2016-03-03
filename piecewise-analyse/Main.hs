@@ -19,8 +19,11 @@ compFileName f1 f2 =
 
 piecewiseAnalyse :: FilePath -> IO ()
 piecewiseAnalyse dir = do
-  let f filename = filename /= "." && filename /= ".."
+  let f filename = filename /= "."
+                && filename /= ".."
+                && "log-" `isPrefixOf` filename
   files <- filter f <$> getDirectoryContents dir
+  forM_ files traceShowM
   forM_ files $ \f1 -> forM_ files $ \f2 ->
     when (f1 /= f2) $ do
        stdout <- readProcess "nofib-analyse/nofib-analyse"
