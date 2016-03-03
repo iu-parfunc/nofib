@@ -97,7 +97,7 @@ export PATH="${GHC_BIN_DIR}":$PATH
   && "${GHC_BIN_DIR}"/runghc Setup register )
 
 make clean
-make boot
+make EXTRA_HC_OPTS="-package-db ${DEPENDENCY_PKG_DIR} ${EXTRA_NOFIB_FLAGS}" boot
 make EXTRA_HC_OPTS="-package-db ${DEPENDENCY_PKG_DIR} ${EXTRA_NOFIB_FLAGS}" 2>&1 | tee ${LOG_NAME}
 
 mkdir -p "${LOG_DIR}"/
