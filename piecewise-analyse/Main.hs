@@ -2,7 +2,7 @@
 module Main where
 
 import Control.Monad (forM_, when)
-import Data.List (isPrefixOf)
+import Data.List (isPrefixOf, sort)
 
 import Debug.Trace
 
@@ -22,7 +22,7 @@ piecewiseAnalyse dir = do
   let f filename = filename /= "."
                 && filename /= ".."
                 && "log-" `isPrefixOf` filename
-  files <- filter f <$> getDirectoryContents dir
+  files <- (sort . filter f) <$> getDirectoryContents dir
   forM_ files traceShowM
   forM_ files $ \f1 -> forM_ files $ \f2 ->
     when (f1 /= f2) $ do

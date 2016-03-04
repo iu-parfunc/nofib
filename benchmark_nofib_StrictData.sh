@@ -47,10 +47,10 @@ elif [[ ("${UBOX_BRANCH}" != "stock") && ("${UBOX_FDO_SUM_DMD_WW}" == "1") ]]; t
 fi
 
 # -fdo-sum-cpr-ww
-if   [[ ("${UBOX_BRANCH}" == "stock") && ("${UBOX_FDO_CPR_WW}" == "1") ]]; then
+if   [[ ("${UBOX_BRANCH}" == "stock") && ("${UBOX_FDO_SUM_CPR_WW}" == "1") ]]; then
     echo "Invalid configuration, amigo."
     exit 0
-elif [[ ("${UBOX_BRANCH}" != "stock") && ("${UBOX_FDO_CPR_WW}" == "1") ]]; then
+elif [[ ("${UBOX_BRANCH}" != "stock") && ("${UBOX_FDO_SUM_CPR_WW}" == "1") ]]; then
     echo "Using -fdo-sum-cpr-ww"
     EXTRA_NOFIB_FLAGS+=" -fdo-sum-cpr-ww"
 fi
