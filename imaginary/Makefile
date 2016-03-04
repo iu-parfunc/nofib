@@ -1,9 +1,7 @@
 TOP = ..
 include $(TOP)/mk/boilerplate.mk
 
-# DISABLED FOR NOW:
-#   bernoulli
-SUBDIRS = exp3_8 gen_regexps integrate paraffins primes queens \
+SUBDIRS = bernoulli exp3_8 gen_regexps integrate paraffins primes queens \
           rfib tak wheel-sieve1 wheel-sieve2 x2n1 kahan
 
 OTHER_SUBDIRS = digits-of-e1 digits-of-e2
