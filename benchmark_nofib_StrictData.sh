@@ -98,7 +98,7 @@ export PATH="${GHC_BIN_DIR}":$PATH
 
 make clean
 make EXTRA_HC_OPTS="-package-db ${DEPENDENCY_PKG_DIR} ${EXTRA_NOFIB_FLAGS}" boot
-make EXTRA_HC_OPTS="-package-db ${DEPENDENCY_PKG_DIR} ${EXTRA_NOFIB_FLAGS}" 2>&1 | tee ${LOG_NAME}
+make EXTRA_HC_OPTS="-package-db ${DEPENDENCY_PKG_DIR} ${EXTRA_NOFIB_FLAGS}" --keep-going 2>&1 | tee ${LOG_NAME}
 
 mkdir -p "${LOG_DIR}"/
 cp ${LOG_NAME} "${LOG_DIR}"/
