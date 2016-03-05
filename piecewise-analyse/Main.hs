@@ -2,7 +2,7 @@
 module Main where
 
 import Control.Monad (forM_, when)
-import Data.List (isPrefixOf, sort)
+import Data.List (isPrefixOf, isSubsequenceOf, sort)
 
 import Debug.Trace
 
@@ -22,6 +22,10 @@ piecewiseAnalyse dir = do
   let f filename = filename /= "."
                 && filename /= ".."
                 && "log-" `isPrefixOf` filename
+                && not ("magramal" `isSubsequenceOf` filename)
+                   -- ^ Let's prune out the results so that we only
+                   -- use the logs from one machine. Otherwise, this
+                   -- will take forever.
   files <- (sort . filter f) <$> getDirectoryContents dir
   forM_ files traceShowM
   forM_ files $ \f1 -> forM_ files $ \f2 ->
