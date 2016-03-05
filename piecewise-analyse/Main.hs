@@ -2,6 +2,7 @@
 module Main where
 
 import Control.Monad (forM_, when)
+import qualified Control.Monad.Parallel as Par (forM_)
 import Data.List (isPrefixOf, isSubsequenceOf, sort)
 
 import Debug.Trace
@@ -28,7 +29,7 @@ piecewiseAnalyse dir = do
                    -- will take forever.
   files <- (sort . filter f) <$> getDirectoryContents dir
   forM_ files traceShowM
-  forM_ files $ \f1 -> forM_ files $ \f2 ->
+  Par.forM_ files $ \f1 -> Par.forM_ files $ \f2 ->
     when (f1 /= f2) $ do
        stdout <- readProcess "nofib-analyse/nofib-analyse"
                              [dir </> f1, dir </> f2] ""
