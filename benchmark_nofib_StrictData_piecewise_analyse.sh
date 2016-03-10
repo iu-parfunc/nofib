@@ -9,7 +9,7 @@ set -xe
 # Before running, please update this to correspond to the last
 # benchmark_nofib_StrictData ${BUILD_NUM} that was run.
 # 
-CONFIGURABLE_BUILD_NUM=45
+CONFIGURABLE_BUILD_NUM=47
 
 
 CURRENT_DIR=`pwd`
